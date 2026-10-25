@@ -307,33 +307,156 @@ const supabaseClient = window.supabase.createClient(
 );
 
 const today = new Date();
-const savedProfile = JSON.parse(localStorage.getItem('studyflow_profile') || 'null');
+
 const profileBg = document.getElementById('profileBg');
+
 const profileForm = document.getElementById('profileForm');
+
 function applyProfile(profile){
+
   if(!profile) return;
-  const title=document.getElementById('welcomeTitle');
-  if(title) title.textContent=`Buongiorno, ${profile.name}! 👋`;
+
+  const title = document.getElementById('welcomeTitle');
+
+  if(title && profile.name){
+
+    title.textContent = `Buongiorno, ${profile.name}! 👋`;
+
+  }
+
 }
-if(savedProfile){
-  applyProfile(savedProfile);
-  profileBg.classList.remove('open');
-}else{
-  profileBg.classList.add('open');
-  setTimeout(()=>document.getElementById('profileName')?.focus(),80);
-}
-profileForm.addEventListener('submit',e=>{
-  e.preventDefault();
-  const profile={
-    name:document.getElementById('profileName').value.trim(),
-    surname:document.getElementById('profileSurname').value.trim(),
-    age:document.getElementById('profileAge').value,
-    email:document.getElementById('profileEmail').value.trim()
+
+async function loadUserProfile(){
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  const user = session?.user;
+
+  if(!user){
+
+    profileBg.classList.remove('open');
+
+    return;
+
+  }
+
+  const metadata = user.user_metadata || {};
+
+  const profile = {
+
+    name: metadata.name || '',
+
+    surname: metadata.surname || '',
+
+    age: metadata.age || '',
+
+    email: user.email || ''
+
   };
-  localStorage.setItem('studyflow_profile',JSON.stringify(profile));
+
+  if(profile.name && profile.surname && profile.age){
+
+    applyProfile(profile);
+
+    profileBg.classList.remove('open');
+
+    localStorage.setItem(
+
+      'studyflow_profile',
+
+      JSON.stringify(profile)
+
+    );
+
+  }else{
+
+    document.getElementById('profileName').value = profile.name;
+
+    document.getElementById('profileSurname').value = profile.surname;
+
+    document.getElementById('profileAge').value = profile.age;
+
+    document.getElementById('profileEmail').value = profile.email;
+
+    profileBg.classList.add('open');
+
+    setTimeout(() => {
+
+      document.getElementById('profileName')?.focus();
+
+    }, 100);
+
+  }
+
+}
+
+profileForm.addEventListener('submit', async e => {
+
+  e.preventDefault();
+
+  const profile = {
+
+    name: document.getElementById('profileName').value.trim(),
+
+    surname: document.getElementById('profileSurname').value.trim(),
+
+    age: document.getElementById('profileAge').value,
+
+    email: document.getElementById('profileEmail').value.trim()
+
+  };
+
+  const { error } = await supabaseClient.auth.updateUser({
+
+    data: {
+
+      name: profile.name,
+
+      surname: profile.surname,
+
+      age: profile.age
+
+    }
+
+  });
+
+  if(error){
+
+    alert('Errore nel salvataggio del profilo: ' + error.message);
+
+    return;
+
+  }
+
+  localStorage.setItem(
+
+    'studyflow_profile',
+
+    JSON.stringify(profile)
+
+  );
+
   applyProfile(profile);
+
   profileBg.classList.remove('open');
+
 });
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+
+  if(session?.user){
+
+    loadUserProfile();
+
+  }else{
+
+    profileBg.classList.remove('open');
+
+  }
+
+});
+
+loadUserProfile();
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 let tasks=JSON.parse(localStorage.getItem('studyflow_tasks')||'null')||[
