@@ -613,8 +613,49 @@ render();
   updateTimers();
 })();
 </script>
-<div id="authBox" style="max-width:400px;margin:40px auto;padding:24px;border-radius:16px;background:#fff;box-shadow:0 4px 20px #0001;">
+<div id="authBox" style="max-width:400px;margin:40px auto;padding:24px;border-radius:16px;background:#fff;color:#222;box-shadow:0 4px 20px #0001;">
+<style>
 
+  #authBox h2,
+
+  #authBox label,
+
+  #authBox p {
+
+    color: #222 !important;
+
+  }
+
+  #authBox input {
+
+    color: #222;
+
+    background: #fff;
+
+    border: 1px solid #bbb;
+
+    border-radius: 8px;
+
+  }
+
+  #authBox button {
+
+    color: #fff;
+
+    background: #4f46e5;
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 10px 14px;
+
+    margin: 4px 2px;
+
+  }
+
+</style>
+  });
   <h2>Accedi a StudyFlow</h2>
 
   <form id="authForm">
