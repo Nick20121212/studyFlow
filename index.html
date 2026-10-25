@@ -299,9 +299,8 @@ h1{margin:0;font-size:clamp(29px,3vw,40px);letter-spacing:-.035em}.subtitle{colo
   </div>
 
   <script>
-    const SUPABASE_URL = https://munswtshhhyenmgzyszg.supabase.co/rest/v1/;
-const SUPABASE_KEY = sb_publishable_u1VsYnR5WmXCuRZL7RNXzQ_tkpvFCHD
-
+    const SUPABASE_URL = "https://munswtshhhyenmgzyszg.supabase.co";
+const SUPABASE_KEY = "sb_publishable_u1VsYnR5WmXCuRZL7RNXzQ_tkpvFCHD";
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
@@ -614,6 +613,99 @@ render();
   updateTimers();
 })();
 </script>
+<div id="authBox" style="max-width:400px;margin:40px auto;padding:24px;border-radius:16px;background:#fff;box-shadow:0 4px 20px #0001;">
 
+  <h2>Accedi a StudyFlow</h2>
+
+  <form id="authForm">
+
+    <label for="authEmail">Email</label>
+
+    <input id="authEmail" type="email" required placeholder="La tua email"
+
+      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+
+    <label for="authPassword">Password</label>
+
+    <input id="authPassword" type="password" placeholder="Almeno 6 caratteri"
+
+      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+
+    <button type="button" id="registerBtn">Registrati</button>
+
+    <button type="submit">Accedi</button>
+
+    <button type="button" id="magicBtn">Ricevi un link via email</button>
+
+  </form>
+
+  <p id="authMessage" role="status"></p>
+
+</div>
+  <script>
+
+const authForm = document.getElementById('authForm');
+
+const authEmail = document.getElementById('authEmail');
+
+const authPassword = document.getElementById('authPassword');
+
+const authMessage = document.getElementById('authMessage');
+
+document.getElementById('registerBtn').addEventListener('click', async () => {
+
+  const { error } = await supabaseClient.auth.signUp({
+
+    email: authEmail.value.trim(),
+
+    password: authPassword.value
+
+  });
+
+  authMessage.textContent = error
+
+    ? error.message
+
+    : 'Registrazione inviata! Controlla la tua email per confermare l’account.';
+
+});
+
+authForm.addEventListener('submit', async (event) => {
+
+  event.preventDefault();
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+
+    email: authEmail.value.trim(),
+
+    password: authPassword.value
+
+  });
+
+  authMessage.textContent = error
+
+    ? error.message
+
+    : 'Accesso effettuato!';
+
+});
+
+document.getElementById('magicBtn').addEventListener('click', async () => {
+
+  const { error } = await supabaseClient.auth.signInWithOtp({
+
+    email: authEmail.value.trim()
+
+  });
+
+  authMessage.textContent = error
+
+    ? error.message
+
+    : 'Ti abbiamo inviato un link di accesso via email.';
+
+});
+
+</script>
 </body>
 </html>
