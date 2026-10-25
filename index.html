@@ -682,8 +682,7 @@ render();
 
   <p id="authMessage" role="status"></p>
 
-</div>
-  <script>
+<script>
 
 const authForm = document.getElementById('authForm');
 
@@ -693,73 +692,89 @@ const authPassword = document.getElementById('authPassword');
 
 const authMessage = document.getElementById('authMessage');
 
-document.getElementById('registerBtn').addEventListener('click', async () => {
-  if (!authEmail.value.trim() || authPassword.value.length < 6) {
+document.getElementById('registerBtn').onclick = async () => {
 
-    authMessage.textContent = 'Inserisci un’email valida e una password di almeno 6 caratteri.';
+  try {
 
-    return;
+    authMessage.textContent = 'Registrazione in corso...';
+
+    const { error } = await supabaseClient.auth.signUp({
+
+      email: authEmail.value.trim(),
+
+      password: authPassword.value
+
+    });
+
+    authMessage.textContent = error
+
+      ? error.message
+
+      : 'Registrazione inviata! Controlla la tua email.';
+
+  } catch (e) {
+
+    authMessage.textContent = 'Errore: ' + e.message;
 
   }
 
-  const { error } = await supabaseClient.auth.signUp({
+};
 
-    email: authEmail.value.trim(),
-
-    password: authPassword.value
-
-  });
-
-  authMessage.textContent = error
-
-    ? error.message
-
-    : 'Registrazione inviata! Controlla la tua email per confermare l’account.';
-
-});
-
-authForm.addEventListener('submit', async (event) => {
+authForm.onsubmit = async (event) => {
 
   event.preventDefault();
 
-  const { error } = await supabaseClient.auth.signInWithPassword({
+  try {
 
-    email: authEmail.value.trim(),
+    authMessage.textContent = 'Accesso in corso...';
 
-    password: authPassword.value
+    const { error } = await supabaseClient.auth.signInWithPassword({
 
-  });
+      email: authEmail.value.trim(),
 
-  authMessage.textContent = error
+      password: authPassword.value
 
-    ? error.message
+    });
 
-    : 'Accesso effettuato!';
+    authMessage.textContent = error
 
-});
+      ? error.message
 
-document.getElementById('magicBtn').addEventListener('click', async () => {
-  if (!authEmail.value.trim()) {
+      : 'Accesso effettuato!';
 
-    authMessage.textContent = 'Inserisci prima la tua email.';
+  } catch (e) {
 
-    return;
+    authMessage.textContent = 'Errore: ' + e.message;
 
   }
 
-  const { error } = await supabaseClient.auth.signInWithOtp({
+};
 
-    email: authEmail.value.trim()
+document.getElementById('magicBtn').onclick = async () => {
 
-  });
+  try {
 
-  authMessage.textContent = error
+    authMessage.textContent = 'Invio del link in corso...';
 
-    ? error.message
+    const { error } = await supabaseClient.auth.signInWithOtp({
 
-    : 'Ti abbiamo inviato un link di accesso via email.';
+      email: authEmail.value.trim()
 
-});
+    });
+
+    authMessage.textContent = error
+
+      ? error.message
+
+      : 'Link inviato! Controlla la tua email.';
+
+  } catch (e) {
+
+    authMessage.textContent = 'Errore: ' + e.message;
+
+  }
+
+};
 
 </script>
 </body>
