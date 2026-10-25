@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyFlow — Organizza la scuola</title>
+  <style>
+:root{
+  --bg:#0f1220; --surface:#171b2e; --surface2:#1e243b; --line:#2b3350;
+  --text:#f5f7ff; --muted:#9aa4bd; --primary:#8b7cff; --primary2:#6f5ee8;
+  --blue:#4d9cff; --blue-bg:rgba(77,156,255,.13);
+  --orange:#ffb454; --orange-bg:rgba(255,180,84,.13);
+  --green:#39d39f; --green-bg:rgba(57,211,159,.13);
+  --red:#ff6b81; --shadow:0 16px 45px rgba(0,0,0,.22);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:
+radial-gradient(circle at 80% -10%,rgba(111,94,232,.22),transparent 32%),linear-gradient(135deg,#0f1220,#12172a 55%,#101523);color:var(--text);min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:flex}
+aside{width:250px;background:rgba(18,22,38,.88);border-right:1px solid var(--line);padding:25px 17px;position:fixed;inset:0 auto 0 0;backdrop-filter:blur(16px)}
+.logo{display:flex;align-items:center;gap:11px;font-weight:850;font-size:21px;margin:0 10px 34px}
+.logo-mark{width:35px;height:35px;display:grid;place-items:center;border-radius:11px;color:white;background:linear-gradient(135deg,var(--primary),#4f9cff);box-shadow:0 8px 24px rgba(111,94,232,.3)}
+nav button{width:100%;border:0;background:transparent;padding:12px 13px;border-radius:11px;display:flex;align-items:center;gap:12px;color:var(--muted);margin:5px 0;text-align:left;font-weight:650;transition:.18s}
+nav button.active,nav button:hover{color:#fff;background:rgba(139,124,255,.13)}
+.nav-icon{width:20px;text-align:center}
+.main{margin-left:250px;width:calc(100% - 250px);padding:32px 38px 60px;max-width:1500px}
+header{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:27px}
+.eyebrow{color:#a99fff;font-size:12px;font-weight:850;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+h1{margin:0;font-size:clamp(29px,3vw,40px);letter-spacing:-.035em}.subtitle{color:var(--muted);margin:8px 0 0}
+.add-btn{border:0;background:linear-gradient(135deg,var(--primary),#6250dc);color:#fff;padding:13px 18px;border-radius:12px;font-weight:800;box-shadow:0 9px 25px rgba(111,94,232,.28)}
+.add-btn:hover{transform:translateY(-1px)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}
+.stat{background:rgba(23,27,46,.9);border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:var(--shadow)}
+.stat-label{color:var(--muted);font-size:12px;font-weight:750}.stat-value{font-size:28px;font-weight:850;margin-top:5px}.stat small{color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px}
+.panel{background:rgba(23,27,46,.94);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.panel-head{padding:19px 21px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:15px}
+.panel-title{font-size:18px;font-weight:820}.filters{display:flex;gap:7px;flex-wrap:wrap}
+.filter{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:9px;padding:7px 11px;font-size:11px;font-weight:800}.filter.active{background:#f4f5ff;color:#171b2e;border-color:#f4f5ff}
+.task-list{padding:5px 20px 12px}.task{display:grid;grid-template-columns:28px 1fr auto;gap:13px;align-items:center;padding:16px 3px;border-bottom:1px solid rgba(43,51,80,.65)}
+.task:last-child{border-bottom:0}.check{width:21px;height:21px;border:2px solid #4a5471;border-radius:7px;background:transparent;display:grid;place-items:center;color:#fff;font-size:12px;padding:0}
+.task.done .check{background:var(--green);border-color:var(--green)}.task.done .task-name{text-decoration:line-through;color:#707b95}
+.task-name{font-weight:800}.task-meta{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:6px}.subject{color:var(--muted);font-size:12px}
+.badge{padding:4px 8px;border-radius:7px;font-size:10px;font-weight:850;letter-spacing:.03em}.badge.compito{color:#7db8ff;background:var(--blue-bg)}.badge.verifica{color:#ffc46d;background:var(--orange-bg)}.badge.done{color:#58e1b1;background:var(--green-bg)}
+.date{color:#aab2c6;font-size:12px;font-weight:700;white-space:nowrap}.urgent{color:#ff7e91}
+.calendar-wrap{padding:19px}.calendar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.month-title{font-size:16px;font-weight:850;text-transform:capitalize}.month-actions{display:flex;gap:6px}.month-actions button{border:1px solid var(--line);background:var(--surface2);color:#c8cee0;border-radius:8px;width:31px;height:31px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.week div{color:#737e99;font-size:9px;font-weight:850;text-align:center;padding-bottom:6px}.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-day{min-height:67px;border:1px solid transparent;border-radius:10px;background:rgba(30,36,59,.5);padding:7px;position:relative;text-align:left;color:#cdd3e3}.cal-day.muted{opacity:.3;background:transparent}.cal-day.today{border-color:var(--primary);box-shadow:inset 0 0 0 1px rgba(139,124,255,.15)}.day-number{font-size:11px;font-weight:800}
+.event-dot{height:5px;border-radius:5px;margin-top:8px;font-size:0}.event-dot.compito{background:var(--blue)}.event-dot.verifica{background:var(--orange)}
+.event-count{font-size:9px;color:#8994ae;margin-top:3px}.calendar-legend{display:flex;gap:14px;margin-top:12px;color:var(--muted);font-size:10px}.legend{display:flex;align-items:center;gap:5px}.legend i{width:7px;height:7px;border-radius:50%;display:inline-block}.legend .b{background:var(--blue)}.legend .o{background:var(--orange)}
+.upcoming{padding:0 19px 19px}.upcoming h3{font-size:13px;margin:7px 0 10px}.mini{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(43,51,80,.6)}.mini:last-child{border:0}.mini-date{min-width:42px;height:42px;border-radius:10px;background:var(--orange-bg);color:#ffc46d;display:grid;place-items:center;font-weight:900;font-size:11px;text-align:center}.mini strong{display:block;font-size:12px}.mini span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.empty{text-align:center;padding:45px 20px;color:var(--muted)}
+.modal-bg{position:fixed;inset:0;background:rgba(4,7,15,.72);display:none;place-items:center;padding:20px;z-index:10;backdrop-filter:blur(5px)}.modal-bg.open{display:grid}.modal{width:min(520px,100%);background:#191e32;border:1px solid var(--line);border-radius:18px;padding:25px;box-shadow:0 30px 80px rgba(0,0,0,.4)}.modal h2{margin:0 0 20px}.form-grid{display:grid;gap:14px}label{font-size:11px;font-weight:800;color:#aeb6c9;display:grid;gap:7px}input,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;outline:none;background:#111629;color:#f5f7ff}input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(139,124,255,.12)}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.cancel{border:1px solid var(--line);background:transparent;color:#cbd1df;padding:10px 15px;border-radius:10px;font-weight:700}.save{border:0;background:var(--primary);color:white;padding:10px 17px;border-radius:10px;font-weight:800}
+@media(max-width:1050px){aside{width:76px;padding:20px 10px}.logo span,nav button span{display:none}.logo{justify-content:center;margin:0 0 28px}nav button{justify-content:center}.main{margin-left:76px;width:calc(100% - 76px);padding:25px 20px}.layout{grid-template-columns:1fr}.calendar-grid{grid-template-columns:repeat(7,1fr)}}
+@media(max-width:650px){.stats{grid-template-columns:repeat(2,1fr)}header{align-items:flex-start;flex-direction:column}.add-btn{width:100%}.task{grid-template-columns:28px 1fr}.date{grid-column:2}.panel-head{align-items:flex-start;flex-direction:column}.cal-day{min-height:55px}}
+
+.agenda-strip{
+  background:linear-gradient(180deg,#c90000,#b90000);
+  border-radius:18px;
+  padding:13px 14px 10px;
+  margin:-2px 0 22px;
+  box-shadow:0 16px 35px rgba(190,0,0,.18);
+  overflow:hidden;
+}
+.agenda-month{font-size:11px;font-weight:900;letter-spacing:.09em;color:#fff;margin:0 0 7px 2px}
+.agenda-days{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.agenda-days::-webkit-scrollbar{display:none}
+.agenda-day{min-width:42px;height:48px;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;opacity:.9;border:1px solid transparent}
+.agenda-day .dow{font-size:9px;font-weight:750;line-height:1}.agenda-day .num{font-size:14px;font-weight:900;line-height:1.2;margin-top:4px}
+.agenda-day.selected{background:#fff;color:#b40000;box-shadow:0 5px 15px rgba(0,0,0,.16)}
+.agenda-day.has-event:not(.selected)::after{content:"";width:4px;height:4px;background:#fff;border-radius:50%;margin-top:3px}
+.agenda-section{margin-bottom:20px}
+.agenda-card{background:#1b1d1f;border:1px solid #2e3033;border-radius:13px;padding:13px 15px}
+.agenda-card-title{font-size:12px;font-weight:850}.agenda-card-meta{font-size:10px;color:#8f949d;margin-top:5px}.agenda-card-desc{font-size:11px;color:#ddd;margin-top:10px;padding-top:9px;border-top:1px solid #333}
+.view-hidden{display:none!important}
+
+
+.calendar-day-scroller{
+  display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:6px;
+  align-items:center;margin-top:14px;padding-top:13px;border-top:1px solid #303131
+}
+.day-scroll-arrow{
+  width:32px;height:32px;border-radius:9px;border:1px solid #3a3b3b;
+  background:#202121;color:#fff;font-size:20px;line-height:1
+}
+.day-scroller-track{
+  display:flex;gap:7px;overflow-x:auto;scroll-behavior:smooth;
+  scrollbar-width:none;padding:2px
+}
+.day-scroller-track::-webkit-scrollbar{display:none}
+.scroll-day{
+  flex:0 0 48px;height:48px;border:1px solid #363838;background:#1b1c1c;
+  color:#aaa;border-radius:12px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center
+}
+.scroll-day .sd-dow{font-size:8px;font-weight:800}
+.scroll-day .sd-num{font-size:13px;font-weight:900;margin-top:3px}
+.scroll-day.selected{background:#fff;color:#171717;border-color:#fff}
+.scroll-day.has-task{box-shadow:inset 0 -3px 0 #4d9cff}
+.scroll-day.has-test{box-shadow:inset 0 -3px 0 #ffb84d}
+.scroll-day.selected.has-task{box-shadow:inset 0 -3px 0 #4d9cff}
+.selected-day-activities{margin-top:10px}
+.selected-day-head{font-size:11px;font-weight:850;margin-bottom:7px}
+.selected-activity{
+  display:flex;align-items:center;gap:9px;background:#1b1c1c;
+  border:1px solid #2e3030;border-radius:9px;padding:9px 10px;margin-top:6px
+}
+.selected-activity .sa-dot{width:7px;height:7px;border-radius:50%;flex:none}
+.selected-activity .sa-dot.compito{background:#4d9cff}
+.selected-activity .sa-dot.verifica{background:#ffb84d}
+.selected-activity strong{font-size:10px;display:block}
+.selected-activity span{font-size:9px;color:#858a91;display:block;margin-top:2px}
+
+
+.delete-task{
+  width:28px;height:28px;flex:none;border:1px solid #3a3b3b;
+  background:#151616;color:#9a9a9a;border-radius:8px;font-size:14px;
+}
+.delete-task:hover{background:#3b1719;color:#ff6971;border-color:#7c292d}
+.selected-activity .delete-task{margin-left:auto}
+
+
+.calendar-day-details{
+  margin-top:12px;background:#171818;border:1px solid #303232;border-radius:11px;
+  padding:12px
+}
+.calendar-day-details-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin-bottom:8px
+}
+.calendar-day-details-head strong{font-size:12px}
+.calendar-day-details-empty{font-size:10px;color:#777;padding:5px 0}
+.calendar-detail-item{
+  display:flex;align-items:center;gap:9px;padding:9px 0;
+  border-top:1px solid #2c2e2e
+}
+.calendar-detail-item:first-child{border-top:0}
+.calendar-detail-dot{width:7px;height:7px;border-radius:50%;flex:none}
+.calendar-detail-dot.compito{background:#4d9cff}
+.calendar-detail-dot.verifica{background:#ffb84d}
+.calendar-detail-main{min-width:0;flex:1}
+.calendar-detail-main strong{display:block;font-size:10px}
+.calendar-detail-main span{display:block;color:#858a91;font-size:9px;margin-top:2px}
+.calendar-delete{
+  width:25px;height:25px;border:1px solid #4a3032;background:#211617;
+  color:#ff7278;border-radius:7px;font-size:14px;line-height:1;
+  flex:none
+}
+.calendar-delete:hover{background:#5a171b;border-color:#9d3339}
+
+
+.calendar-check{
+  width:25px;height:25px;border:1px solid #4a4b4b;background:#151616;
+  color:#777;border-radius:7px;font-size:13px;line-height:1;flex:none
+}
+.calendar-check:hover{border-color:#4d9cff;color:#72b2ff}
+.calendar-check.checked{background:#2b9b78;border-color:#40d39e;color:#fff}
+
+
+.profile-modal{width:min(560px,100%);background:#191e32;border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.profile-modal h2{margin:0 0 7px;font-size:25px}.profile-modal p{margin:0 0 22px;color:var(--muted);font-size:13px;line-height:1.5}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.profile-grid .full{grid-column:1/-1}
+.profile-save{width:100%;margin-top:20px;border:0;background:linear-gradient(135deg,var(--primary),#6250dc);color:#fff;padding:13px 17px;border-radius:11px;font-weight:850;box-shadow:0 9px 25px rgba(111,94,232,.25)}
+.profile-note{font-size:10px;color:#737e99;margin-top:10px;text-align:center}
+@media(max-width:650px){.profile-grid{grid-template-columns:1fr}.profile-grid .full{grid-column:auto}}
+</style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="logo">
+        <div class="logo-mark">✓</div>
+        <span>StudyFlow</span>
+      </div>
+      <nav>
+        <button class="active" data-view="dashboard"><span class="nav-icon">▦</span><span>Dashboard</span></button>
+        <button data-view="compiti"><span class="nav-icon">✓</span><span>Compiti</span></button>
+        <button data-view="verifiche"><span class="nav-icon">★</span><span>Verifiche</span></button>
+        <button data-view="calendario"><span class="nav-icon">□</span><span>Calendario</span></button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header>
+        <div>
+          <div class="eyebrow">La tua scuola, organizzata</div>
+          <h1 id="welcomeTitle">Buongiorno! 👋</h1>
+          <p class="subtitle">Tieni sotto controllo compiti e verifiche senza dimenticare nulla.</p>
+        </div>
+        <button class="add-btn" id="openModal">+ Aggiungi attività</button>
+      </header>
+
+      
+<section class="agenda-strip" id="agendaStrip">
+  <div class="agenda-month">OTTOBRE</div>
+  <div class="agenda-days" id="agendaDays"></div>
+</section>
+
+<section class="stats">
+        <div class="stat"><div class="stat-label">Da fare</div><div class="stat-value" id="todoCount">0</div><small>attività</small></div>
+        <div class="stat"><div class="stat-label">Compiti</div><div class="stat-value" id="homeworkCount">0</div><small>da completare</small></div>
+        <div class="stat"><div class="stat-label">Verifiche</div><div class="stat-value" id="testCount">0</div><small>in programma</small></div>
+        <div class="stat"><div class="stat-label">Completate</div><div class="stat-value" id="doneCount">0</div><small>bravo! 🎉</small></div>
+      </section>
+
+      <div class="layout">
+        <section class="panel" id="tasksPanel">
+          <div class="panel-head">
+            <div class="panel-title">Le mie attività</div>
+            <div class="filters">
+              <button class="filter active" data-filter="all">Tutte</button>
+              <button class="filter" data-filter="compito">Compiti</button>
+              <button class="filter" data-filter="verifica">Verifiche</button>
+              <button class="filter" data-filter="done">Completate</button>
+            </div>
+          </div>
+          <div class="task-list" id="taskList"></div>
+        </section>
+
+        <aside class="panel side-panel" id="calendarPanel" style="position:static;width:auto;border:1px solid var(--line);">
+  <div class="calendar-wrap">
+    <div class="calendar-top">
+      <div class="month-title" id="monthName"></div>
+      <div class="month-actions"><button id="prevMonth">‹</button><button id="nextMonth">›</button></div>
+    </div>
+    <div class="week">
+      <div>LUN</div><div>MAR</div><div>MER</div><div>GIO</div><div>VEN</div><div>SAB</div><div>DOM</div>
+    </div>
+    <div class="calendar-grid" id="calendarDays"></div>
+    <div class="calendar-legend">
+      <span class="legend"><i class="b"></i> Compito</span>
+      <span class="legend"><i class="o"></i> Verifica</span>
+    </div>
+  </div>
+  <div class="upcoming">
+    <h3>Prossime verifiche</h3>
+    <div id="upcomingTests"></div>
+  </div>
+</aside>
+      </div>
+    </main>
+  </div>
+
+
+  <div class="modal-bg" id="profileBg">
+    <div class="profile-modal">
+      <h2>Benvenuto su StudyFlow 👋</h2>
+      <p>Prima di iniziare, inserisci i tuoi dati. Ti verranno richiesti solo la prima volta e resteranno salvati su questo dispositivo.</p>
+      <form id="profileForm">
+        <div class="profile-grid">
+          <label>Nome
+            <input id="profileName" required autocomplete="given-name" placeholder="Es. Marco">
+          </label>
+          <label>Cognome
+            <input id="profileSurname" required autocomplete="family-name" placeholder="Es. Rossi">
+          </label>
+          <label>Età
+            <input id="profileAge" type="number" min="10" max="99" required placeholder="Es. 16">
+          </label>
+          <label class="full">Email
+            <input id="profileEmail" type="email" required autocomplete="email" placeholder="nome@email.com">
+          </label>
+        </div>
+        <button class="profile-save" type="submit">Continua su StudyFlow</button>
+        <div class="profile-note">I dati non vengono inviati a nessun server: sono salvati solo nel browser.</div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <h2>Aggiungi attività</h2>
+      <form id="taskForm">
+        <div class="form-grid">
+          <label>Titolo
+            <input id="title" required placeholder="Es. Esercizi pag. 45">
+          </label>
+          <label>Materia
+            <input id="subject" required placeholder="Es. Matematica">
+          </label>
+          <label>Tipo
+            <select id="type">
+              <option value="compito">Compito</option>
+              <option value="verifica">Verifica</option>
+            </select>
+          </label>
+          <label>Data
+            <input id="date" type="date" required>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="cancel" id="closeModal">Annulla</button>
+          <button class="save" type="submit">Salva attività</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+const today = new Date();
+const savedProfile = JSON.parse(localStorage.getItem('studyflow_profile') || 'null');
+const profileBg = document.getElementById('profileBg');
+const profileForm = document.getElementById('profileForm');
+function applyProfile(profile){
+  if(!profile) return;
+  const title=document.getElementById('welcomeTitle');
+  if(title) title.textContent=`Buongiorno, ${profile.name}! 👋`;
+}
+if(savedProfile){
+  applyProfile(savedProfile);
+  profileBg.classList.remove('open');
+}else{
+  profileBg.classList.add('open');
+  setTimeout(()=>document.getElementById('profileName')?.focus(),80);
+}
+profileForm.addEventListener('submit',e=>{
+  e.preventDefault();
+  const profile={
+    name:document.getElementById('profileName').value.trim(),
+    surname:document.getElementById('profileSurname').value.trim(),
+    age:document.getElementById('profileAge').value,
+    email:document.getElementById('profileEmail').value.trim()
+  };
+  localStorage.setItem('studyflow_profile',JSON.stringify(profile));
+  applyProfile(profile);
+  profileBg.classList.remove('open');
+});
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+let tasks=JSON.parse(localStorage.getItem('studyflow_tasks')||'null')||[
+{id:1,title:'Esercizi pag. 82 n. 1-10',subject:'Matematica',type:'compito',date:iso(new Date(today.getFullYear(),today.getMonth(),today.getDate()+1)),done:false},
+{id:2,title:'Ripassare Rivoluzione Francese',subject:'Storia',type:'verifica',date:iso(new Date(today.getFullYear(),today.getMonth(),today.getDate()+3)),done:false},
+{id:3,title:'Leggere capitolo 5',subject:'Italiano',type:'compito',date:iso(new Date(today.getFullYear(),today.getMonth(),today.getDate()+2)),done:true},
+{id:4,title:'Verifica di inglese',subject:'Inglese',type:'verifica',date:iso(new Date(today.getFullYear(),today.getMonth(),today.getDate()+6)),done:false}
+];
+let currentFilter='all';
+let calendarDate=new Date(today.getFullYear(),today.getMonth(),1);
+const save=()=>localStorage.setItem('studyflow_tasks',JSON.stringify(tasks));
+const formatDate=d=>new Intl.DateTimeFormat('it-IT',{day:'numeric',month:'short'}).format(new Date(d+'T00:00:00'));
+const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+function daysUntil(date){return Math.round((new Date(date+'T00:00:00')-new Date(iso(today)+'T00:00:00'))/86400000)}
+
+
+function renderAgendaStrip(){
+  const el=document.getElementById('agendaDays');
+  if(!el) return;
+  const base=new Date(today.getFullYear(),today.getMonth(),today.getDate()-7);
+  let out='';
+  for(let i=0;i<21;i++){
+    const d=new Date(base); d.setDate(base.getDate()+i);
+    const date=iso(d), selected=date===iso(today);
+    const has=tasks.some(t=>t.date===date&&!t.done);
+    out+=`<button class="agenda-day ${selected?'selected':''} ${has?'has-event':''}" onclick="jumpToDate('${date}')">
+      <span class="dow">${d.toLocaleDateString('it-IT',{weekday:'short'}).replace('.','').toUpperCase()}</span>
+      <span class="num">${d.getDate()}</span>
+    </button>`;
+  }
+  el.innerHTML=out;
+  document.querySelector('.agenda-month').textContent=new Intl.DateTimeFormat('it-IT',{month:'long'}).format(today).toUpperCase();
+}
+function jumpToDate(date){
+  const d=new Date(date+'T00:00:00');
+  calendarDate=new Date(d.getFullYear(),d.getMonth(),1);
+  renderCalendar();
+  document.getElementById('calendarPanel')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function setView(view){
+  const taskPanel=document.getElementById('tasksPanel');
+  const calPanel=document.getElementById('calendarPanel');
+  if(!taskPanel||!calPanel)return;
+  if(view==='calendario'){taskPanel.classList.add('view-hidden');calPanel.classList.remove('view-hidden');calPanel.scrollIntoView({behavior:'smooth',block:'start'})}
+  else if(view==='compiti'){taskPanel.classList.remove('view-hidden');calPanel.classList.add('view-hidden');currentFilter='compito';syncFilters();taskPanel.scrollIntoView({behavior:'smooth',block:'start'})}
+  else if(view==='verifiche'){taskPanel.classList.remove('view-hidden');calPanel.classList.add('view-hidden');currentFilter='verifica';syncFilters();taskPanel.scrollIntoView({behavior:'smooth',block:'start'})}
+  else {taskPanel.classList.remove('view-hidden');calPanel.classList.remove('view-hidden');currentFilter='all';syncFilters()}
+  renderAgendaStrip();
+render();
+}
+function syncFilters(){
+ document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.filter===currentFilter));
+}
+document.querySelectorAll('nav button[data-view]').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); setView(b.dataset.view);
+}));
+
+
+function renderDayScroller(){
+  const track=document.getElementById('dayScrollerTrack');
+  const activities=document.getElementById('selectedDayActivities');
+  if(!track||!activities)return;
+
+  const base=new Date(today.getFullYear(),today.getMonth(),today.getDate()-14);
+  let out='';
+  for(let i=0;i<45;i++){
+    const d=new Date(base);
+    d.setDate(base.getDate()+i);
+    const date=iso(d);
+    const items=tasks.filter(t=>t.date===date&&!t.done);
+    const hasTask=items.some(t=>t.type==='compito');
+    const hasTest=items.some(t=>t.type==='verifica');
+    out+=`<button class="scroll-day ${date===selectedDate?'selected':''} ${hasTask?'has-task':''} ${hasTest?'has-test':''}" onclick="selectCalendarDay('${date}')">
+      <span class="sd-dow">${d.toLocaleDateString('it-IT',{weekday:'short'}).replace('.','').toUpperCase()}</span>
+      <span class="sd-num">${d.getDate()}</span>
+    </button>`;
+  }
+  track.innerHTML=out;
+
+  const selected=new Date(selectedDate+'T00:00:00');
+  document.querySelectorAll('.scroll-day').forEach(btn=>{
+    if(btn.classList.contains('selected')) btn.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  });
+
+  const items=tasks.filter(t=>t.date===selectedDate&&!t.done);
+  activities.innerHTML=`<div class="selected-day-head">${longDate(selectedDate)}</div>`+
+    (items.length ? items.map(t=>`
+      <div class="selected-activity">
+        <i class="sa-dot ${t.type}"></i>
+        <div><strong>${esc(t.title)}</strong><span>${esc(t.subject)} · ${t.type==='verifica'?'Verifica':'Compito'}</span></div>
+      </div>`).join('') :
+      '<div style="color:#777;font-size:10px;padding:5px 0 2px">Nessuna attività da fare in questo giorno.</div>');
+}
+function selectCalendarDay(date){
+  selectedDate=date;
+  const d=new Date(date+'T00:00:00');
+  calendarDate=new Date(d.getFullYear(),d.getMonth(),1);
+  renderDateStrip();
+  renderCalendar();
+  renderDayScroller();
+  renderCalendarDayDetails();
+}
+
+function render(){
+ const list=document.getElementById('taskList');
+ const filtered=tasks.filter(t=>currentFilter==='all'?true:currentFilter==='done'?t.done:t.type===currentFilter&&!t.done).sort((a,b)=>a.date.localeCompare(b.date));
+ list.innerHTML=filtered.length?filtered.map(t=>`<div class="task ${t.done?'done':''}">
+ <button class="check" onclick="toggleTask(${t.id})">${t.done?'✓':''}</button>
+ <div><div class="task-name">${escapeHtml(t.title)}</div><div class="task-meta"><span class="subject">${escapeHtml(t.subject)}</span><span class="badge ${t.type}">${t.type==='verifica'?'VERIFICA':'COMPITO'}</span>${t.done?'<span class="badge done">COMPLETATO</span>':''}</div></div>
+ <div class="date ${!t.done&&daysUntil(t.date)<=1?'urgent':''}">${
+  t.done
+    ? `<span class="done-countdown" data-task-id="${t.id}">24:00:00</span>`
+    : formatDate(t.date)
+}</div></div>`).join(''):`<div class="empty">Nessuna attività in questa categoria.<br>✨ Aggiungine una!</div>`;
+ document.getElementById('todoCount').textContent=tasks.filter(t=>!t.done).length;
+ document.getElementById('homeworkCount').textContent=tasks.filter(t=>t.type==='compito'&&!t.done).length;
+ document.getElementById('testCount').textContent=tasks.filter(t=>t.type==='verifica'&&!t.done).length;
+ document.getElementById('doneCount').textContent=tasks.filter(t=>t.done).length;
+ renderCalendar();renderUpcoming();
+}
+function deleteTask(id){
+  const task=tasks.find(t=>t.id===id);
+  if(!task)return;
+  if(!confirm(`Eliminare "${task.title}"?`))return;
+  tasks=tasks.filter(t=>t.id!==id);
+  save();
+  renderAgendaStrip();
+  renderToday();
+  renderTasks();
+  renderCalendar();
+  renderDayScroller();
+  renderCalendarDayDetails();
+}
+function toggleTask(id){
+  tasks=tasks.map(t=>{
+    if(t.id!==id) return t;
+    const done=!t.done;
+    return {...t, done, completedAt: done ? Date.now() : undefined};
+  });
+  save();renderAgendaStrip();render()
+}
+
+
+function renderCalendarDayDetails(){
+  const title=document.getElementById('calendarSelectedDayTitle');
+  const list=document.getElementById('calendarSelectedDayList');
+  if(!title||!list)return;
+  title.textContent=longDate(selectedDate);
+  const items=tasks.filter(t=>t.date===selectedDate&&!t.done)
+    .sort((a,b)=>a.type.localeCompare(b.type));
+  if(!items.length){
+    list.innerHTML='<div class="calendar-day-details-empty">Nessun compito o verifica da fare in questo giorno.</div>';
+    return;
+  }
+  list.innerHTML=items.map(t=>`
+    <div class="calendar-detail-item">
+      <button class="calendar-check" title="Segna come completato" onclick="toggleTask(${t.id})">✓</button>
+      <i class="calendar-detail-dot ${t.type}"></i>
+      <div class="calendar-detail-main">
+        <strong>${esc(t.title)}</strong>
+        <span>${esc(t.subject)} · ${t.type==='verifica'?'Verifica':'Compito'}</span>
+      </div>
+      <button class="calendar-delete" title="Elimina attività" onclick="deleteTask(${t.id})">×</button>
+    </div>
+  `).join('');
+}
+
+function renderCalendar(){
+ const y=calendarDate.getFullYear(),m=calendarDate.getMonth(), first=new Date(y,m,1), days=new Date(y,m+1,0).getDate();
+ document.getElementById('monthName').textContent=new Intl.DateTimeFormat('it-IT',{month:'long',year:'numeric'}).format(calendarDate);
+ const grid=document.getElementById('calendarDays'); let html='';
+ let start=first.getDay();start=start===0?6:start-1;
+ for(let i=0;i<start;i++)html+='<div class="cal-day muted"></div>';
+ for(let d=1;d<=days;d++){
+   const date=`${y}-${pad(m+1)}-${pad(d)}`, items=tasks.filter(t=>t.date===date&&!t.done);
+   const isToday=date===iso(today);
+   const comp=items.filter(t=>t.type==='compito').length, ver=items.filter(t=>t.type==='verifica').length;
+   html+=`<div class="cal-day ${isToday?'today':''}" title="${items.map(t=>escapeHtml(t.title)).join(' • ')}">
+    <div class="day-number">${d}</div>
+    ${comp?`<div class="event-dot compito">${comp}</div>`:''}
+    ${ver?`<div class="event-dot verifica">${ver}</div>`:''}
+    ${items.length?`<div class="event-count">${items.length} attività</div>`:''}
+   </div>`;
+ }
+ grid.innerHTML=html;
+}
+function renderUpcoming(){
+ const upcoming=tasks.filter(t=>t.type==='verifica'&&!t.done&&t.date>=iso(today)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
+ document.getElementById('upcomingTests').innerHTML=upcoming.length?upcoming.map(t=>{const d=new Date(t.date+'T00:00:00');return `<div class="mini"><div class="mini-date">${pad(d.getDate())}<br><small>${d.toLocaleDateString('it-IT',{month:'short'}).replace('.','')}</small></div><div><strong>${escapeHtml(t.title)}</strong><span>${escapeHtml(t.subject)}</span></div></div>`}).join(''):'<div style="color:var(--muted);font-size:12px">Nessuna verifica in programma.</div>';
+}
+
+document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentFilter=btn.dataset.filter;render()}));
+document.getElementById('prevMonth').onclick=()=>{calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar();renderDayScroller()};
+document.getElementById('nextMonth').onclick=()=>{calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar();renderDayScroller()};
+
+const modalBg=document.getElementById('modalBg');
+document.getElementById('openModal').onclick=()=>{document.getElementById('date').value=iso(new Date(today.getFullYear(),today.getMonth(),today.getDate()+1));modalBg.classList.add('open')};
+document.getElementById('closeModal').onclick=()=>modalBg.classList.remove('open');
+modalBg.addEventListener('click',e=>{if(e.target===modalBg)modalBg.classList.remove('open')});
+document.getElementById('taskForm').addEventListener('submit',e=>{e.preventDefault();tasks.push({id:Date.now(),title:document.getElementById('title').value.trim(),subject:document.getElementById('subject').value.trim(),type:document.getElementById('type').value,date:document.getElementById('date').value,done:false});save();renderAgendaStrip();render();e.target.reset();modalBg.classList.remove('open')});
+render();
+</script>
+
+
+
+
+
+
+
+
+
+
+<style id="sf-countdown-style">
+.done-countdown{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:82px!important;
+  padding:6px 9px!important;
+  border-radius:8px!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  font-variant-numeric:tabular-nums!important;
+  letter-spacing:.2px!important;
+  color:#ffb7b7!important;
+  background:rgba(220,45,45,.13)!important;
+  border:1px solid rgba(220,45,45,.28)!important;
+  white-space:nowrap!important;
+}
+</style>
+<script>
+(function(){
+  const DAY=24*60*60*1000;
+
+  // Existing completed items that do not yet have a timestamp start their
+  // 24-hour countdown now. New completions are timestamped in toggleTask().
+  tasks.forEach(t=>{
+    if(t.done && !t.completedAt) t.completedAt=Date.now();
+  });
+  save();
+
+  function format(ms){
+    ms=Math.max(0,ms);
+    let s=Math.ceil(ms/1000);
+    const h=Math.floor(s/3600); s%=3600;
+    const m=Math.floor(s/60); s%=60;
+    return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  }
+
+  function updateTimers(){
+    let expired=false;
+    const now=Date.now();
+
+    tasks=tasks.filter(t=>{
+      if(!t.done || !t.completedAt) return true;
+      const left=Number(t.completedAt)+DAY-now;
+      if(left<=0){ expired=true; return false; }
+      return true;
+    });
+
+    if(expired){
+      save();
+      renderAgendaStrip();
+      render();
+      return;
+    }
+
+    document.querySelectorAll('.done-countdown[data-task-id]').forEach(el=>{
+      const id=Number(el.dataset.taskId);
+      const t=tasks.find(x=>x.id===id);
+      if(!t || !t.done || !t.completedAt) return;
+      el.textContent=format(Number(t.completedAt)+DAY-now);
+    });
+  }
+
+  setInterval(updateTimers,1000);
+  updateTimers();
+})();
+</script>
+
+</body>
+</html>
