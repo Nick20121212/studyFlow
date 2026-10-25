@@ -691,6 +691,13 @@ authForm.addEventListener('submit', async (event) => {
 });
 
 document.getElementById('magicBtn').addEventListener('click', async () => {
+  if (!authEmail.value.trim()) {
+
+    authMessage.textContent = 'Inserisci prima la tua email.';
+
+    return;
+
+  }
 
   const { error } = await supabaseClient.auth.signInWithOtp({
 
