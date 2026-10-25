@@ -613,7 +613,6 @@ render();
   updateTimers();
 })();
 </script>
-<div id="authBox" style="max-width:400px;margin:40px auto;padding:24px;border-radius:16px;background:#fff;color:#222;box-shadow:0 4px 20px #0001;">
 <style>
 
   #authBox h2,
@@ -627,6 +626,8 @@ render();
   }
 
   #authBox input {
+
+    display: block;
 
     width: 100%;
 
@@ -666,7 +667,7 @@ render();
 
     #authBox {
 
-      width: calc(100% - 24px) !important;
+      width: calc(100% - 24px);
 
       max-width: 400px;
 
@@ -689,22 +690,20 @@ render();
   }
 
 </style>
-  
+
+<div id="authBox" style="width:calc(100% - 32px);max-width:400px;box-sizing:border-box;margin:20px auto;padding:16px;border-radius:16px;background:#fff;color:#222;box-shadow:0 4px 20px #0001;">
+
   <h2>Accedi a StudyFlow</h2>
 
   <form id="authForm">
 
     <label for="authEmail">Email</label>
 
-    <input id="authEmail" type="email" required placeholder="La tua email"
-
-      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+    <input id="authEmail" type="email" required placeholder="La tua email">
 
     <label for="authPassword">Password</label>
 
-    <input id="authPassword" type="password" placeholder="Almeno 6 caratteri"
-
-      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+    <input id="authPassword" type="password" minlength="6" required placeholder="Almeno 6 caratteri">
 
     <button type="button" id="registerBtn">Registrati</button>
 
@@ -715,6 +714,8 @@ render();
   </form>
 
   <p id="authMessage" role="status"></p>
+
+</div>
 
 <script>
 
@@ -811,5 +812,7 @@ document.getElementById('magicBtn').onclick = async () => {
 };
 
 </script>
+
 </body>
+
 </html>
