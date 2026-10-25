@@ -628,6 +628,10 @@ render();
 
   #authBox input {
 
+    width: 100%;
+
+    box-sizing: border-box;
+
     color: #222;
 
     background: #fff;
@@ -635,6 +639,10 @@ render();
     border: 1px solid #bbb;
 
     border-radius: 8px;
+
+    padding: 12px;
+
+    margin: 8px 0 16px;
 
   }
 
@@ -654,8 +662,34 @@ render();
 
   }
 
+  @media (max-width: 600px) {
+
+    #authBox {
+
+      width: calc(100% - 24px) !important;
+
+      max-width: 400px;
+
+      margin: 20px auto;
+
+      padding: 16px;
+
+      box-sizing: border-box;
+
+    }
+
+    #authBox button {
+
+      max-width: 100%;
+
+      white-space: normal;
+
+    }
+
+  }
+
 </style>
-  });
+  
   <h2>Accedi a StudyFlow</h2>
 
   <form id="authForm">
