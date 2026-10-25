@@ -299,6 +299,14 @@ h1{margin:0;font-size:clamp(29px,3vw,40px);letter-spacing:-.035em}.subtitle{colo
   </div>
 
   <script>
+    const SUPABASE_URL = https://munswtshhhyenmgzyszg.supabase.co/rest/v1/;
+const SUPABASE_KEY = sb_publishable_u1VsYnR5WmXCuRZL7RNXzQ_tkpvFCHD
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
 const today = new Date();
 const savedProfile = JSON.parse(localStorage.getItem('studyflow_profile') || 'null');
 const profileBg = document.getElementById('profileBg');
