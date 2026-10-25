@@ -739,96 +739,299 @@ render();
 </script>
 <style>
 
+  /* LOGIN */
+
+  #authBox{
+
+    width:100%;
+
+    max-width:400px;
+
+    box-sizing:border-box;
+
+    margin:20px auto;
+
+    padding:20px;
+
+    border-radius:16px;
+
+    background:#fff;
+
+    color:#222;
+
+    box-shadow:0 4px 20px #0001;
+
+  }
+
   #authBox h2,
 
   #authBox label,
 
-  #authBox p {
+  #authBox p{
 
-    color: #222 !important;
-
-  }
-
-  #authBox input {
-
-    display: block;
-
-    width: 100%;
-
-    box-sizing: border-box;
-
-    color: #222;
-
-    background: #fff;
-
-    border: 1px solid #bbb;
-
-    border-radius: 8px;
-
-    padding: 12px;
-
-    margin: 8px 0 16px;
+    color:#222 !important;
 
   }
 
-  #authBox button {
+  #authBox input{
 
-    color: #fff;
+    display:block;
 
-    background: #4f46e5;
+    width:100%;
 
-    border: none;
+    box-sizing:border-box;
 
-    border-radius: 8px;
+    color:#222;
 
-    padding: 10px 14px;
+    background:#fff;
 
-    margin: 4px 2px;
+    border:1px solid #bbb;
 
-  }
+    border-radius:8px;
 
- @media (max-width: 600px) {
+    padding:12px;
 
-  #authBox {
-
-    width: calc(100vw - 24px) !important;
-
-    max-width: 400px !important;
-
-    margin: 20px auto !important;
-
-    padding: 16px !important;
-
-    box-sizing: border-box !important;
-
-    overflow: hidden;
+    margin:8px 0 16px;
 
   }
 
-  #authBox input {
+  #authBox button{
 
-    width: 100% !important;
+    color:#fff;
 
-    max-width: 100% !important;
+    background:#4f46e5;
 
-    box-sizing: border-box !important;
+    border:none;
 
-  }
+    border-radius:8px;
 
-  #authBox button {
+    padding:10px 14px;
 
-    max-width: 100%;
+    margin:4px 2px;
 
-    box-sizing: border-box;
-
-    white-space: normal;
+    cursor:pointer;
 
   }
 
-}
+  #authMessage{
+
+    min-height:20px;
+
+    margin-bottom:0;
+
+  }
+
+  /* ROTELLINA */
+
+  #settingsButton{
+
+    position:fixed;
+
+    top:18px;
+
+    right:18px;
+
+    width:44px;
+
+    height:44px;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    border-radius:50%;
+
+    background:rgba(23,27,46,.95);
+
+    color:#fff;
+
+    font-size:21px;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    z-index:100;
+
+    box-shadow:0 6px 20px rgba(0,0,0,.25);
+
+  }
+
+  #settingsButton:hover{
+
+    transform:rotate(25deg);
+
+  }
+
+  /* MENU ROTELLINA */
+
+  #settingsMenu{
+
+    position:fixed;
+
+    top:70px;
+
+    right:18px;
+
+    width:190px;
+
+    background:#191e32;
+
+    border:1px solid var(--line);
+
+    border-radius:14px;
+
+    padding:8px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.35);
+
+    display:none;
+
+    z-index:101;
+
+  }
+
+  #settingsMenu.open{
+
+    display:block;
+
+  }
+
+  #settingsMenu button{
+
+    width:100%;
+
+    border:0;
+
+    background:transparent;
+
+    color:#fff;
+
+    padding:11px 12px;
+
+    border-radius:9px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+  }
+
+  #settingsMenu button:hover{
+
+    background:rgba(139,124,255,.13);
+
+  }
+
+  #settingsUser{
+
+    padding:8px 12px 10px;
+
+    color:#9aa4bd;
+
+    font-size:11px;
+
+    border-bottom:1px solid var(--line);
+
+    margin-bottom:4px;
+
+  }
+
+  @media(max-width:600px){
+
+    #authBox{
+
+      width:calc(100vw - 24px);
+
+      max-width:400px;
+
+      margin:20px auto;
+
+      padding:16px;
+
+      box-sizing:border-box;
+
+      overflow:hidden;
+
+    }
+
+    #authBox input{
+
+      width:100%;
+
+      max-width:100%;
+
+      box-sizing:border-box;
+
+    }
+
+    #authBox button{
+
+      max-width:100%;
+
+      box-sizing:border-box;
+
+      white-space:normal;
+
+    }
+
+    #settingsButton{
+
+      top:12px;
+
+      right:12px;
+
+    }
+
+    #settingsMenu{
+
+      top:64px;
+
+      right:12px;
+
+    }
+
+  }
+
 </style>
 
-<div id="authBox" style="width:100%;max-width:400px;box-sizing:border-box;margin:20px auto;padding:16px;border-radius:16px;background:#fff;color:#222;box-shadow:0 4px 20px #0001;">
+<!-- ROTELLINA -->
+
+<button id="settingsButton" type="button" aria-label="Impostazioni">
+
+  ⚙️
+
+</button>
+
+<!-- MENU ROTELLINA -->
+
+<div id="settingsMenu">
+
+  <div id="settingsUser">
+
+    Account
+
+  </div>
+
+  <button type="button" id="profileMenuBtn">
+
+    👤 Profilo
+
+  </button>
+
+  <button type="button" id="logoutBtn">
+
+    🚪 Esci
+
+  </button>
+
+</div>
+
+<!-- LOGIN -->
+
+<div id="authBox">
 
   <h2>Accedi a StudyFlow</h2>
 
@@ -836,17 +1039,51 @@ render();
 
     <label for="authEmail">Email</label>
 
-    <input id="authEmail" type="email" required placeholder="La tua email">
+    <input
+
+      id="authEmail"
+
+      type="email"
+
+      required
+
+      placeholder="La tua email"
+
+    >
 
     <label for="authPassword">Password</label>
 
-    <input id="authPassword" type="password" minlength="6" required placeholder="Almeno 6 caratteri">
+    <input
 
-    <button type="button" id="registerBtn">Registrati</button>
+      id="authPassword"
 
-    <button type="submit">Accedi</button>
+      type="password"
 
-    <button type="button" id="magicBtn">Ricevi un link via email</button>
+      minlength="6"
+
+      required
+
+      placeholder="Almeno 6 caratteri"
+
+    >
+
+    <button type="button" id="registerBtn">
+
+      Registrati
+
+    </button>
+
+    <button type="submit">
+
+      Accedi
+
+    </button>
+
+    <button type="button" id="magicBtn">
+
+      Ricevi un link via email
+
+    </button>
 
   </form>
 
@@ -856,6 +1093,8 @@ render();
 
 <script>
 
+const authBox = document.getElementById('authBox');
+
 const authForm = document.getElementById('authForm');
 
 const authEmail = document.getElementById('authEmail');
@@ -864,19 +1103,77 @@ const authPassword = document.getElementById('authPassword');
 
 const authMessage = document.getElementById('authMessage');
 
+const settingsButton = document.getElementById('settingsButton');
+
+const settingsMenu = document.getElementById('settingsMenu');
+
+const settingsUser = document.getElementById('settingsUser');
+
+const profileMenuBtn = document.getElementById('profileMenuBtn');
+
+const logoutBtn = document.getElementById('logoutBtn');
+
+/* MOSTRA / NASCONDE LOGIN E ROTELLINA */
+
+function updateAuthUI(session){
+
+  const loggedIn = !!session?.user;
+
+  if(loggedIn){
+
+    authBox.style.display = 'none';
+
+    settingsButton.style.display = 'flex';
+
+    settingsUser.textContent =
+
+      session.user.email || 'Account StudyFlow';
+
+  }else{
+
+    authBox.style.display = 'block';
+
+    settingsButton.style.display = 'none';
+
+    settingsMenu.classList.remove('open');
+
+  }
+
+}
+
+/* REGISTRAZIONE */
+
 document.getElementById('registerBtn').onclick = async () => {
 
-  try {
+  try{
 
-    authMessage.textContent = 'Registrazione in corso...';
+    const email = authEmail.value.trim();
 
-    const { error } = await supabaseClient.auth.signUp({
+    const password = authPassword.value;
 
-      email: authEmail.value.trim(),
+    if(!email || !password){
 
-      password: authPassword.value
+      authMessage.textContent =
 
-    });
+        'Inserisci email e password.';
+
+      return;
+
+    }
+
+    authMessage.textContent =
+
+      'Registrazione in corso...';
+
+    const { error } =
+
+      await supabaseClient.auth.signUp({
+
+        email,
+
+        password
+
+      });
 
     authMessage.textContent = error
 
@@ -884,55 +1181,93 @@ document.getElementById('registerBtn').onclick = async () => {
 
       : 'Registrazione inviata! Controlla la tua email.';
 
-  } catch (e) {
+  }catch(e){
 
-    authMessage.textContent = 'Errore: ' + e.message;
+    authMessage.textContent =
+
+      'Errore: ' + e.message;
 
   }
 
 };
 
-authForm.onsubmit = async (event) => {
+/* LOGIN */
+
+authForm.onsubmit = async event => {
 
   event.preventDefault();
 
-  try {
+  try{
 
-    authMessage.textContent = 'Accesso in corso...';
+    authMessage.textContent =
 
-    const { error } = await supabaseClient.auth.signInWithPassword({
+      'Accesso in corso...';
 
-      email: authEmail.value.trim(),
+    const { data, error } =
 
-      password: authPassword.value
+      await supabaseClient.auth.signInWithPassword({
 
-    });
+        email: authEmail.value.trim(),
 
-    authMessage.textContent = error
+        password: authPassword.value
 
-      ? error.message
+      });
 
-      : 'Accesso effettuato!';
+    if(error){
 
-  } catch (e) {
+      authMessage.textContent =
 
-    authMessage.textContent = 'Errore: ' + e.message;
+        error.message;
+
+      return;
+
+    }
+
+    authMessage.textContent =
+
+      'Accesso effettuato!';
+
+    updateAuthUI(data.session);
+
+  }catch(e){
+
+    authMessage.textContent =
+
+      'Errore: ' + e.message;
 
   }
 
 };
 
+/* LINK MAGIC EMAIL */
+
 document.getElementById('magicBtn').onclick = async () => {
 
-  try {
+  try{
 
-    authMessage.textContent = 'Invio del link in corso...';
+    const email = authEmail.value.trim();
 
-    const { error } = await supabaseClient.auth.signInWithOtp({
+    if(!email){
 
-      email: authEmail.value.trim()
+      authMessage.textContent =
 
-    });
+        'Inserisci prima la tua email.';
+
+      return;
+
+    }
+
+    authMessage.textContent =
+
+      'Invio del link in corso...';
+
+    const { error } =
+
+      await supabaseClient.auth.signInWithOtp({
+
+        email
+
+      });
 
     authMessage.textContent = error
 
@@ -940,11 +1275,99 @@ document.getElementById('magicBtn').onclick = async () => {
 
       : 'Link inviato! Controlla la tua email.';
 
-  } catch (e) {
+  }catch(e){
 
-    authMessage.textContent = 'Errore: ' + e.message;
+    authMessage.textContent =
+
+      'Errore: ' + e.message;
 
   }
+
+};
+
+/* CAMBIO SESSIONE */
+
+supabaseClient.auth.onAuthStateChange(
+
+  (event, session) => {
+
+    updateAuthUI(session);
+
+  }
+
+);
+
+/* CONTROLLO SESSIONE QUANDO APRI IL SITO */
+
+supabaseClient.auth.getSession().then(({ data }) => {
+
+  updateAuthUI(data.session);
+
+});
+
+/* APRI / CHIUDI MENU */
+
+settingsButton.onclick = event => {
+
+  event.stopPropagation();
+
+  settingsMenu.classList.toggle('open');
+
+};
+
+/* CHIUDI MENU CLICCANDO FUORI */
+
+document.addEventListener('click', event => {
+
+  if(
+
+    !settingsMenu.contains(event.target) &&
+
+    event.target !== settingsButton
+
+  ){
+
+    settingsMenu.classList.remove('open');
+
+  }
+
+});
+
+/* PROFILO */
+
+profileMenuBtn.onclick = () => {
+
+  settingsMenu.classList.remove('open');
+
+  profileBg.classList.add('open');
+
+};
+
+/* LOGOUT */
+
+logoutBtn.onclick = async () => {
+
+  settingsMenu.classList.remove('open');
+
+  const { error } =
+
+    await supabaseClient.auth.signOut();
+
+  if(error){
+
+    alert(
+
+      'Errore durante il logout: ' +
+
+      error.message
+
+    );
+
+    return;
+
+  }
+
+  updateAuthUI(null);
 
 };
 
