@@ -264,7 +264,7 @@ h1{margin:0;font-size:clamp(29px,3vw,40px);letter-spacing:-.035em}.subtitle{colo
           </label>
         </div>
         <button class="profile-save" type="submit">Continua su StudyFlow</button>
-        <div class="profile-note">I dati non vengono inviati a nessun server: sono salvati solo nel browser.</div>
+        <div class="profile-note">I dati del profilo vengono salvati nel tuo account StudyFlow.</div>
       </form>
     </div>
   </div>
@@ -307,7 +307,6 @@ const supabaseClient = window.supabase.createClient(
 );
 
 const today = new Date();
-
 const profileBg = document.getElementById('profileBg');
 
 const profileForm = document.getElementById('profileForm');
@@ -326,9 +325,7 @@ function applyProfile(profile){
 
 }
 
-async function loadUserProfile(){
-
-  const { data: { session } } = await supabaseClient.auth.getSession();
+async function loadUserProfile(session){
 
   const user = session?.user;
 
@@ -446,7 +443,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 
   if(session?.user){
 
-    loadUserProfile();
+    loadUserProfile(session);
 
   }else{
 
@@ -456,7 +453,11 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 
 });
 
-loadUserProfile();
+supabaseClient.auth.getSession().then(({ data }) => {
+
+  loadUserProfile(data.session);
+
+});
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 let tasks=JSON.parse(localStorage.getItem('studyflow_tasks')||'null')||[
